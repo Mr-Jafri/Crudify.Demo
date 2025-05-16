@@ -1,5 +1,5 @@
 ﻿
-namespace Crudify.Infrastructure.Interfaces;
+namespace Crudify.Application.Interfaces;
 
 public interface ILoggingService
 {

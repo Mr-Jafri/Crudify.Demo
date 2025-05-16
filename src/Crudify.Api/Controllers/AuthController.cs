@@ -1,5 +1,7 @@
-﻿namespace Crudify.Api.Controllers;
+﻿
+namespace Crudify.Api.Controllers;
 
+[AllowAnonymous]
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController(IAuthService authService) : ControllerBase
