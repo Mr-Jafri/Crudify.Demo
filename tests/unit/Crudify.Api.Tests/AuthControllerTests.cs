@@ -1,10 +1,4 @@
-﻿using Crudify.Api.Controllers;
-using Crudify.Application.Dtos.Auth;
-using Crudify.Application.Dtos.Auth.Request;
-using Crudify.Application.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-
+﻿
 namespace Crudify.Api.Tests;
 
 [TestClass]

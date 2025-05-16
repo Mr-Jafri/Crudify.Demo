@@ -1,9 +1,4 @@
-﻿using Crudify.Api.Controllers;
-using Crudify.Application.Dtos;
-using Crudify.Application.Interfaces;
-using Crudify.Domain.Entities;
-using Moq;
-
+﻿
 namespace Crudify.Api.Tests;
 
 [TestClass]
