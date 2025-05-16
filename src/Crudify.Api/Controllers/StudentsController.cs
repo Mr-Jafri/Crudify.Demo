@@ -19,7 +19,5 @@ namespace Crudify.Api.Controllers
 
         [HttpDelete("delete/{id}")]
         public async Task<ApiResponse> DeleteStudent(int id) => await studentService.DeleteStudent(id);
-
-
     }
 }
