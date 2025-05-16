@@ -64,3 +64,10 @@ Contains unit test projects.
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [Visual Studio 2022+](https://visualstudio.microsoft.com/)
 - Optional: Postman or any HTTP client for testing endpoints
+
+## Run Project
+
+- You need to change the database connection string in appSettings.json
+- Run the project in https mode.
+- It will first create the database with the name Crudify and run the migrations and sql scripts.
+- It maintains the sql scripts history in database as well.
