@@ -10,6 +10,16 @@ builder.Services.AddControllers(options =>
     options.Filters.Add(typeof(TokenAuthentication));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("default", policy =>
+    {
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowAnyOrigin();
+    });
+});
+
 builder.Services.AddOpenApi();
 builder.Services.AddSwagger();
 
@@ -29,7 +39,7 @@ app.SeedData();
 
 app.UseMiddleware<ActivityLoggingMiddleware>();
 app.UseMiddleware<ExceptionLoggingMiddleware>();
-
+app.UseCors("default");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

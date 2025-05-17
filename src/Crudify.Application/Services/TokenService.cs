@@ -1,6 +1,4 @@
 ﻿
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
 namespace Crudify.Application.Services;
 
 public class TokenService(IOptionsMonitor<JwtSettings> jwtConfig, ApplicationContext context, TokenValidationParameters tokenValidationParameters) : ITokenService
@@ -25,7 +23,7 @@ public class TokenService(IOptionsMonitor<JwtSettings> jwtConfig, ApplicationCon
         SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddSeconds(30),
+            Expires = DateTime.UtcNow.AddMinutes(jwtConfig.CurrentValue.TokenExpiry),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
