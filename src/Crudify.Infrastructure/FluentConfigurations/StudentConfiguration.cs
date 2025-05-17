@@ -28,15 +28,15 @@ internal class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasMaxLength(20);
 
         builder.Property(s => s.CreatedOn)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(s => s.CreatedBy)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(s => s.ModifiedOn)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(s => s.ModifiedBy)
-            .IsRequired();
+            .IsRequired(false);
     }
 }

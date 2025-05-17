@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Seedings\SqlScripts\Insert_Students.sql" />
     <None Remove="Seedings\SqlScripts\Insert_Users_Roles_UserRoles.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Seedings\SqlScripts\Insert_Students.sql" />
     <EmbeddedResource Include="Seedings\SqlScripts\Insert_Users_Roles_UserRoles.sql" />
   </ItemGroup>
 

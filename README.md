@@ -72,6 +72,7 @@ Contains unit test projects.
 - You need to change the database connection string in appSettings.json
 - Run the project in https mode.
 - It will first create the database with the name Crudify and run the migrations and sql scripts.
+- For SqlScripts, you need to make it Embedded resource from the properties of added file in seedings/sqlscripts folder. This file will be picked when you restart the application.
 - It maintains the sql scripts history in database as well.
 - Credentials for login
 -- email: sjafri@calrom.com, password: @Password123

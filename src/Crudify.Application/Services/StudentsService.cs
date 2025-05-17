@@ -54,7 +54,7 @@ public class StudentsService(ApplicationContext context) : IStudentsService
                 Errors = ["Invalid payload"],
             };
         }
-
+        student.CreatedOn = DateTime.UtcNow;
         context.Students.Add(student);
         await context.SaveChangesAsync();
 
@@ -75,7 +75,7 @@ public class StudentsService(ApplicationContext context) : IStudentsService
                 Errors = ["Id MisMatch"],
             };
         }
-
+        student.ModifiedOn = DateTime.UtcNow;
         context.Entry(student).State = EntityState.Modified;
 
         await context.SaveChangesAsync();
