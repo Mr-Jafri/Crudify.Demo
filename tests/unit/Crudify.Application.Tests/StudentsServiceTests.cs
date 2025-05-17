@@ -39,9 +39,9 @@ public sealed class StudentsServiceTests
         var result = await _service.GetStudentsList();
 
         // Assert
-        Assert.IsTrue(result.Success);
+        Assert.IsFalse(result.Success);
         var students = result.Payload as List<Student>;
-        Assert.AreEqual(0, students.Count);
+        Assert.IsNull(students);
     }
 
     [TestMethod]

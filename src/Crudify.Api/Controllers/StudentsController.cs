@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Crudify.Api.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController(IStudentsService studentService) : ControllerBase

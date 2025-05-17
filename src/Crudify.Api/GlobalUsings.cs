@@ -12,3 +12,7 @@ global using Microsoft.IdentityModel.Tokens;
 global using Crudify.Infrastructure.Interfaces;
 global using Crudify.Application.Dtos;
 global using Microsoft.AspNetCore.Authorization;
+global using Crudify.Api.ActionFilters;
+global using Crudify.Api.Extensions;
+global using Crudify.Application.Services;
+global using Microsoft.OpenApi.Models;

@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 namespace Crudify.Application.Services;
 
 public class TokenService(IOptionsMonitor<JwtSettings> jwtConfig, ApplicationContext context, TokenValidationParameters tokenValidationParameters) : ITokenService
@@ -55,119 +57,17 @@ public class TokenService(IOptionsMonitor<JwtSettings> jwtConfig, ApplicationCon
         };
     }
 
-    public async Task<RefreshTokenResponseDTO> VerifyToken(TokenRequestDTO tokenRequest)
+    public ClaimsPrincipal VerifyToken(string token)
     {
-        JwtSecurityTokenHandler? jwtTokenHandler = new JwtSecurityTokenHandler();
-
-        try
+        var claims = new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
         {
-            RefreshToken? storedToken = await context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == tokenRequest.RefreshToken);
-            if (storedToken == null)
-            {
-                return new RefreshTokenResponseDTO()
-                {
-                    Success = false,
-                    Errors = new List<string>{
-                 "token does not found"
-                }
-                };
-            }
-            ClaimsPrincipal? tokenVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, tokenValidationParameters, out var validatedToken); //?
-
-            var jti = tokenVerification.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Jti).Value;
-
-            if (storedToken.JwtId != jti)
-            {
-                return new RefreshTokenResponseDTO()
-                {
-                    Success = false,
-                    Errors = new List<string>{
-                 "token doesn't match"
-                }
-                };
-            }
-
-            long utcExpireDate = long.Parse(tokenVerification.Claims.FirstOrDefault(d => d.Type == JwtRegisteredClaimNames.Exp).Value);
-
-            // UTC to DateTime
-            DateTime expireDate = UTCtoDateTime(utcExpireDate);
-
-            Console.WriteLine($"expireDate: {expireDate} - now: {DateTime.UtcNow}");
-
-            if (expireDate > DateTime.UtcNow)
-            {
-                return new RefreshTokenResponseDTO()
-                {
-                    Success = false,
-                    Errors = new List<string>{
-                    "Token not expired"
-                }
-                };
-            }
-
-            if (validatedToken is JwtSecurityToken jwtSecurityToken)
-            {
-                bool result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);//?
-
-                if (!result)
-                {
-                    return null;
-                }
-            }
-
-            if (storedToken.IsUsed)
-            {
-                return new RefreshTokenResponseDTO()
-                {
-                    Success = false,
-                    Errors = new List<string>{
-                 "token used."
-                }
-                };
-            }
-
-            if (storedToken.IsRevoked)
-            {
-                return new RefreshTokenResponseDTO()
-                {
-                    Success = false,
-                    Errors = new List<string>{
-                 "token revoked."
-                }
-                };
-            }
-
-            storedToken.IsUsed = true;
-            context.RefreshTokens.Update(storedToken);
-            await context.SaveChangesAsync();
-
-            // return token
-            return new RefreshTokenResponseDTO()
-            {
-                UserId = storedToken.UserId,
-                Success = true,
-            };
-        }
-        catch (Exception e)
-        {
-
-            return new RefreshTokenResponseDTO()
-            {
-                Errors = new List<string>{
-                e.Message
-            },
-                Success = false
-            };
-        }
-    }
-
-    private DateTime UTCtoDateTime(long unixTimeStamp)
-    {
-        var datetimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-
-        datetimeVal = datetimeVal.AddSeconds(unixTimeStamp).ToLocalTime();
-
-        return datetimeVal;
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.CurrentValue.SecretKey)),
+            ValidateLifetime = true,
+            ValidateAudience = false,
+            ValidateIssuer = false,
+        }, out _);
+        return claims;
     }
 
     private string GetRandomString()

@@ -8,7 +8,7 @@ public class StudentsService(ApplicationContext context) : IStudentsService
     {
         var student = await context.Students.ToListAsync();
 
-        if (student is null)
+        if (student is null || !student.Any())
         {
             return new ApiResponse
             {

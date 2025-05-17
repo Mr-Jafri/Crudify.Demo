@@ -1,4 +1,6 @@
-﻿namespace Crudify.Api.Middlewares;
+﻿using System.Net;
+
+namespace Crudify.Api.Middlewares;
 
 public class ExceptionLoggingMiddleware(RequestDelegate next)
 {
@@ -22,8 +24,15 @@ public class ExceptionLoggingMiddleware(RequestDelegate next)
 
             await logger.LogExceptionAsync(log);
 
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsync("An unexpected error occurred.");
+            context.Response.StatusCode = context.Response is not null ? context.Response.StatusCode : (int)HttpStatusCode.InternalServerError;
+            if (context.Response.StatusCode is (int)HttpStatusCode.Unauthorized)
+            {
+                await context.Response.WriteAsync("Unauthorized Access.");
+            }
+            else
+            {
+                await context.Response.WriteAsync("An unexpected error occurred.");
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using System.Security.Claims;
+
 namespace Crudify.Application.Tests;
 
 [TestClass]
@@ -55,70 +57,35 @@ public sealed class TokenServiceTests
     }
 
     [TestMethod]
-    public async Task VerifyToken_InvalidRefreshToken_ReturnsFailure()
+    public void VerifyToken_ValidToken_ReturnsClaimsPrincipal()
     {
         // Arrange
-        var tokenRequest = new TokenRequestDTO
-        {
-            Token = "fake.jwt.token",
-            RefreshToken = "nonexistent"
-        };
+        var user = new ApplicationUser { Id = Guid.NewGuid(), Email = "test@example.com" };
+        var roles = new List<string> { "Admin" };
+
+        var validToken = _tokenService.GenerateToken(user, roles).Result.Token;
 
         // Act
-        var result = await _tokenService.VerifyToken(tokenRequest);
+        var result = _tokenService.VerifyToken(validToken);
 
         // Assert
-        Assert.IsFalse(result.Success);
-        CollectionAssert.Contains(result.Errors, "token does not found");
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType(result, typeof(ClaimsPrincipal));
     }
 
     [TestMethod]
-    public async Task VerifyToken_UsedToken_ReturnsFailure()
+    public void VerifyToken_ValidToken_ReturnsCorrectClaims()
     {
         // Arrange
-        var user = new ApplicationUser { Id = Guid.NewGuid(), Email = "test2@example.com" };
-        var jwtToken = await _tokenService.GenerateToken(user, new List<string> { "User" });
+        var user = new ApplicationUser { Id = Guid.NewGuid(), Email = "test@example.com" };
+        var roles = new List<string> { "Admin" };
 
-        var storedToken = await _context.RefreshTokens.FirstAsync();
-        storedToken.IsUsed = true;
-        _context.Update(storedToken);
-        await _context.SaveChangesAsync();
-
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(jwtToken.Token);
-
-        var tokenRequest = new TokenRequestDTO
-        {
-            Token = jwtToken.Token,
-            RefreshToken = jwtToken.RefreshToken
-        };
+        var validToken = _tokenService.GenerateToken(user, roles).Result.Token;
 
         // Act
-        var result = await _tokenService.VerifyToken(tokenRequest);
+        var result = _tokenService.VerifyToken(validToken);
 
         // Assert
-        Assert.IsFalse(result.Success);
-        CollectionAssert.Contains(result.Errors, "Token not expired");
-    }
-
-    [TestMethod]
-    public async Task VerifyToken_TokenNotExpired_ReturnsFailure()
-    {
-        // Arrange
-        var user = new ApplicationUser { Id = Guid.NewGuid(), Email = "test3@example.com" };
-        var jwtResult = await _tokenService.GenerateToken(user, ["Manager"]);
-
-        var tokenRequest = new TokenRequestDTO
-        {
-            Token = jwtResult.Token,
-            RefreshToken = jwtResult.RefreshToken
-        };
-
-        // Act
-        var result = await _tokenService.VerifyToken(tokenRequest);
-
-        // Assert
-        Assert.IsFalse(result.Success);
-        CollectionAssert.Contains(result.Errors, "Token not expired");
+        Assert.IsTrue(result.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "Admin"));
     }
 }

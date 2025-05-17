@@ -12,7 +12,9 @@ Contains the main application source code.
 #### 📁 Crudify.Api
 The entry point of the application (Web API).
 
+- 📁 ActionFilters
 - 📁 Controllers
+- 📁 Extensions
 - 📁 Middlewares
 
 #### 📁 Crudify.Application
@@ -71,3 +73,6 @@ Contains unit test projects.
 - Run the project in https mode.
 - It will first create the database with the name Crudify and run the migrations and sql scripts.
 - It maintains the sql scripts history in database as well.
+- Credentials for login
+-- email: sjafri@calrom.com, password: @Password123
+-- email: sdjafri@calrom.com, password: @Password123
